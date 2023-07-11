@@ -14,7 +14,11 @@
       },
       {
         "src": "/(.*)",
-        "dest": "PDF_Manager/wsgi.py"
-      }
+        "dest": "PDF_Manager/wsgi.py",
+        "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+        "headers": {
+          "Access-Control-Allow-Origin": "*"
+        }
+        }
     ]
   }
