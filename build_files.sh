@@ -1,3 +1,4 @@
+python -m pip install virtualenv
 python -m venv tutorial-env
 source tutorial-env/bin/activate
 pip install -r requirements.txt
