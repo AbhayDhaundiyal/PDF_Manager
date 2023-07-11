@@ -78,10 +78,10 @@ WSGI_APPLICATION = 'PDF_Manager.wsgi.application'
 DATABASES = {
     "default": {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': "pdf_manager",
-        'USER': "postgres",
-        'PASSWORD': "",
-        'HOST': "localhost",
+        'NAME': "pdf_manager_4j5y",
+        'USER': "pdf_manager_4j5y_user",
+        'PASSWORD': "ReV2uhmRg76kABNmCzEIlr7cmqnvOvBN",
+        'HOST': "ReV2uhmRg76kABNmCzEIlr7cmqnvOvBN@dpg-ciml9ql9aq07opa5a6sg-a.oregon-postgres.render.com",
         'PORT': 5432,
     }
 }
