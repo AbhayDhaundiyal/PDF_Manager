@@ -14,6 +14,9 @@ def read_in_chunks(file_object, chunk_size=1024):
             break
         yield data
 class PDFView(APIView):
+    def get(self, request):
+        return HttpResponse("hello")
+    
     def post(self, request):
         try:
             token = request.headers["Authorization"].split(" ")[1]
