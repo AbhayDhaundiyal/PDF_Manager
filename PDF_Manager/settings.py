@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-2%o_n$a!oul(qu$w&l+d+(9y_-2t423pf&0=e-iw!kzyw@c2$o'
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -78,10 +79,10 @@ WSGI_APPLICATION = 'PDF_Manager.wsgi.application'
 DATABASES = {
     "default": {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': "pdf_manager_4j5y",
-        'USER': "pdf_manager_4j5y_user",
-        'PASSWORD': "ReV2uhmRg76kABNmCzEIlr7cmqnvOvBN",
-        'HOST': "ReV2uhmRg76kABNmCzEIlr7cmqnvOvBN@dpg-ciml9ql9aq07opa5a6sg-a.oregon-postgres.render.com",
+        'NAME': os.environ.get("POSTGRES_DB"),
+        'USER': os.environ.get("POSTGRES_USER"),
+        'PASSWORD': os.environ.get("POSTGRES_PASSWORD"),
+        'HOST': os.environ.get("POSTGRES_HOST"),
         'PORT': 5432,
     }
 }
