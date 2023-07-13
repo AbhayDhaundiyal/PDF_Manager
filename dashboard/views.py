@@ -16,8 +16,14 @@ def read_in_chunks(file_object, chunk_size=1024):
 class PDFView(APIView):
     def get(self, request):
         payload = verify_token(request.headers["Authorization"].split(" ")[1])
-        print(payload)
-        return HttpResponse("sddasd")
+        files = FileShared.objects.filter(user_id = payload["user_id"])
+        response_dict = list()
+        for file in files:
+            file_detail = FileDetails.objects.get(file_id = file.file_id)
+            response_dict.append({"file_name" : file_detail.file_name, "file_id" : file_detail.file_id})
+        response = JsonResponse(response_dict)
+        response.status_code = 200
+        return response
     
     def post(self, request):
         try:
