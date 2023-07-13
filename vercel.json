@@ -7,20 +7,6 @@
         "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
       }
     ],
-    "routes": [
-      {
-        "src": "/static/(.*)",
-        "dest": "/static/$1"
-      },
-      {
-        "src": "/(.*)",
-        "dest": "PDF_Manager/wsgi.py",
-        "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-        "headers": {
-          "Access-Control-Allow-Origin": "*"
-        }
-        }
-    ],
     "headers": [
         {
         "source": "/api/(.*)",
