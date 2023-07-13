@@ -1,5 +1,5 @@
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from dashboard.models import FileShared, File, FileDetails
@@ -53,9 +53,18 @@ class PDFView(APIView):
             response = HttpResponse(str(e))
             response.status_code = 400
             return response
-        print(payload)
-        return None
-        # file = request.FILES["file"]
-        # with open(file.name, "wb") as obj:
-        #     obj.write(file.read())
         
+
+class OpenPDFView(APIView):
+    def get(self, request, file_id : int):
+        try:
+            payload = verify_token(request.headers["Authorization"].split(" ")[1])
+            get_object_or_404(FileShared, file_id = file_id, user_id = payload["user_id"])
+            file = File.objects.get(file_id = file_id)
+            response = HttpResponse(file.file, content_type='application/octet-stream')
+            response.status_code = 200
+            return response
+        except Exception as e:
+            response = HttpResponse(str(e))
+            response.status_code = 200
+            return response
