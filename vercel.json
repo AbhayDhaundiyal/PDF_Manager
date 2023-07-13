@@ -8,7 +8,7 @@
       }
     ],
     "rewrites": [
-        { "src": "/(.*)", "dest": "PDF_Manager/wsgi.py" }
+        { "source": "/(.*)", "destination": "PDF_Manager/wsgi.py" }
     ],
     "headers": [
         {
