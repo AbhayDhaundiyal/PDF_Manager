@@ -50,7 +50,7 @@ class PDFView(APIView):
             response.status_code = 200
             return response
         except Exception as e:
-            response = HttpResponse(str(e))
+            response = HttpResponse(f"**********************{str(e)}*******************")
             response.status_code = 400
             return response
         
@@ -63,10 +63,10 @@ class OpenPDFView(APIView):
                 payload = verify_token(request.headers["Authorization"].split(" ")[1])
                 get_object_or_404(FileShared, file_id = file_id, user_id = payload["user_id"])
             file = File.objects.get(file_id = file_id)
-            response = HttpResponse(file.file, content_type='application/octet-stream')
+            response = HttpResponse(str(file.file), content_type='application/octet-stream')
             response.status_code = 200
             return response
         except Exception as e:
-            response = HttpResponse(str(e))
+            response = HttpResponse(f"**********************{str(e)}*******************")
             response.status_code = 200
             return response
