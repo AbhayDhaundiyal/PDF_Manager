@@ -1,5 +1,6 @@
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from psycopg2 import IntegrityError
 from rest_framework.views import APIView
 from .models import User
 import jwt
@@ -12,13 +13,19 @@ class RegistrationView(APIView):
                 response = HttpResponse("Empty Fields Not Accepted")
                 response.status_code = 400 
                 return response
-        except:
+            user = User(first_name = data["first_name"], last_name = data["last_name"], email = data["email"], password = data["password"])
+            user.save()
+        except IntegrityError as e:
+            response = HttpResponse("Account with the same email already exists")
+            response.status_code = 400 
+            return response
+        except Exception as e:
             response = HttpResponse("Some fields are missing")
             response.status_code = 400 
             return response
-        user = User(first_name = data["first_name"], last_name = data["last_name"], email = data["email"], password = data["password"])
-        user.save()
-        return HttpResponse("User Created")
+        response = HttpResponse("User Created Successfully")
+        response.status_code = 201
+        return response
     
 class Login(APIView):
     def post(self, request):
@@ -42,5 +49,12 @@ class Login(APIView):
             payload=payload_data,
             key=settings.SECRET_KEY
         )
-        response = HttpResponse(f"Token : {token}")
+        response_body = {
+            "access_token" : token,
+            "first_name" : user.first_name,
+            "last_name" : user.last_name,
+            "email" : user.email,
+        }
+        response = JsonResponse(response_body)
+        response.status_code = 200
         return response
