@@ -58,8 +58,10 @@ class PDFView(APIView):
 class OpenPDFView(APIView):
     def get(self, request, file_id : int):
         try:
-            payload = verify_token(request.headers["Authorization"].split(" ")[1])
-            get_object_or_404(FileShared, file_id = file_id, user_id = payload["user_id"])
+            file = FileDetails.objects.get(file_id = file_id)
+            if not file.is_public :
+                payload = verify_token(request.headers["Authorization"].split(" ")[1])
+                get_object_or_404(FileShared, file_id = file_id, user_id = payload["user_id"])
             file = File.objects.get(file_id = file_id)
             response = HttpResponse(file.file, content_type='application/octet-stream')
             response.status_code = 200
