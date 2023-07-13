@@ -22,7 +22,7 @@ class PDFView(APIView):
         for file in files:
             file_detail = FileDetails.objects.get(file_id = file.file_id)
             response_dict.append({"data" : FileDetailsSerializer(file_detail).data})
-        response = JsonResponse({"result" : response_dict})
+        response = JsonResponse({"result" : response_dict}, safe= False)
         response.status_code = 200
         return response
     
