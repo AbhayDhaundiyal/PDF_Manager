@@ -1,5 +1,7 @@
 from django.conf import settings
 import jwt
+from IAM.models import User
+
 
 def verify_token(token):
     payload = jwt.decode(token, key= settings.SECRET_KEY, algorithms=["HS256"])

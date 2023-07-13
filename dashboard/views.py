@@ -2,8 +2,8 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from IAM.utils import verify_token
 from dashboard.models import File_Shared
+from IAM.utils.utils import verify_token
 
 def read_in_chunks(file_object, chunk_size=1024):
     """Lazy function (generator) to read a file piece by piece.
@@ -15,12 +15,16 @@ def read_in_chunks(file_object, chunk_size=1024):
         yield data
 class PDFView(APIView):
     def get(self, request):
-        return HttpResponse("hello")
+        payload = verify_token(request.headers["Authorization"].split(" ")[1])
+        print(payload)
+        return HttpResponse("sddasd")
     
     def post(self, request):
         try:
             token = request.headers["Authorization"].split(" ")[1]
             payload = verify_token(token)
+            print(request.data)
+            return HttpResponse("sss")
         except Exception as e:
             response = HttpResponse(str(e))
             response.status_code = 400

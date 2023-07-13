@@ -2,6 +2,7 @@ from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.db import IntegrityError
 from rest_framework.views import APIView
+from IAM.utils.utils import verify_token
 from .models import User
 import jwt
 
