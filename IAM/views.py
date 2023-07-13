@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
-from psycopg2 import IntegrityError
+from django.db import IntegrityError
 from rest_framework.views import APIView
 from .models import User
 import jwt
