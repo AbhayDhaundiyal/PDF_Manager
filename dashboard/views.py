@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from dashboard.models import FileShared, File, FileDetails
 from IAM.utils.utils import verify_token
+from serializers import FileDetailsSerializer
 
 def read_in_chunks(file_object, chunk_size=1024):
     """Lazy function (generator) to read a file piece by piece.
@@ -20,8 +21,8 @@ class PDFView(APIView):
         response_dict = list()
         for file in files:
             file_detail = FileDetails.objects.get(file_id = file.file_id)
-            response_dict.append({"file_name" : file_detail.file_name, "file_id" : file_detail.file_id})
-        response = JsonResponse(response_dict)
+            response_dict.append({"data" : FileDetailsSerializer(file_detail).data})
+        response = JsonResponse({"result" : response_dict})
         response.status_code = 200
         return response
     
