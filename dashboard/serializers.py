@@ -2,17 +2,17 @@ from rest_framework import serializers
 from dashboard.models import FileShared, File, FileDetails
 
 
-class FileDetailsSerializer(serializers.ModelSerialize):
+class FileDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = FileDetails
         fields = "__all__"
 
-class FileSharedSerializer(serializers.ModelSerialize):
+class FileSharedSerializer(serializers.ModelSerializer):
     class Meta:
         model = FileShared
         fields = "__all__"
 
-class FileSerializer(serializers.ModelSerialize):
+class FileSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = File
