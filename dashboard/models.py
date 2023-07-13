@@ -6,13 +6,13 @@ class File(models.Model):
     file = models.BinaryField(default= None)
 
 
-class File_details(models.Model):
+class FileDetails(models.Model):
     file_id = models.AutoField(primary_key= True)
     file_name = models.CharField(max_length= 50)
     is_public = models.BooleanField(default= False)
 
 
-class File_Shared(models.Model):
+class FileShared(models.Model):
     file_id = models.BigIntegerField(null = True)
     user_id = models.BigIntegerField(null= True)
 
