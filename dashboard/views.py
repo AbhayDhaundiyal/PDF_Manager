@@ -57,6 +57,35 @@ class PDFView(APIView):
             response = HttpResponse(str(e))
             response.status_code = 500
             return response
+    def patch(self, request):
+        try:
+            payload = verify_token(request.headers["Authorization"].split(" ")[1])
+            data = request.data
+            file_detail = FileDetails.objects.filter(file_id = data["file_id"], owner = payload["user_id"])
+            if len(file_detail) == 0:
+                raise Exception("Permission Denied")
+            if data["operation"] == "share":
+                user = User.objects.filter(id = data["second_user"])
+                if len(user) == 0:
+                    raise Exception("No such user")
+                file_shared = FileShared()
+                file_shared.user_id = data["second_user"]
+                file_shared.file_id = data["file_id"]
+                file_shared.save()
+            elif data["operation"] == "toggle":
+                file_detail = FileDetails.objects.get(file_id = data["file_id"])
+                file_detail.is_public = not file_detail.is_public
+                file_detail.save()
+                if file_detail.is_public:
+                    response = JsonResponse({"file_status" : file_detail.is_public, "message" : "made the file public"})
+                else:
+                    response = JsonResponse({"file_status" : file_detail.is_public, "message" : "made the file available to selected users"})
+                response.status_code = 200
+                return response
+        except Exception as e:
+            response = HttpResponse(str(e))
+            response.status_code = 400
+            return response
         
 
 class OpenPDFView(APIView):
@@ -73,35 +102,6 @@ class OpenPDFView(APIView):
         except Exception as e:
             response = HttpResponse(str(e))
             response.status_code = 500
-            return response
-    def patch(self, request):
-        try:
-            payload = verify_token(request.headers["Authorization"].split(" ")[1])
-            data = request.data
-            file_detail = FileDetails.objects.filter(file_id = data["file_id"], owner = payload["user_id"])
-            if len(file_detail) == 0:
-                raise Exception("Permission Denied")
-            if data["operation"] == "share":
-                user = User.objects.filter(id = data["second_user"])
-                if len(user) == 0:
-                    raise Exception("No such user")
-                file_shared = FileShared()
-                file_shared.user_id = data["second_user"]
-                file_shared.file_id = data["file_id"]
-                file_shared.save()
-            elif data["operation"] == "make_public":
-                file_detail = FileDetails.objects.get(file_id = data["file_id"])
-                file_detail.is_public = not file_detail.is_public
-                file_detail.save()
-                if file_detail.is_public:
-                    response = JsonResponse({"file_status" : file_detail.is_public, "message" : "made the file public"})
-                else:
-                    response = JsonResponse({"file_status" : file_detail.is_public, "message" : "made the file available to selected users"})
-                response.status_code = 200
-                return response
-        except Exception as e:
-            response = HttpResponse(str(e))
-            response.status_code = 400
             return response
         
         
