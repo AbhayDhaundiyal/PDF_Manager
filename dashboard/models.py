@@ -2,14 +2,20 @@ from django.db import models
 
 
 class File(models.Model):
-    file_name = models.CharField(max_length= 30)
+    file_id = models.BigIntegerField(null= False, default= -1)
     file = models.BinaryField(default= None)
+
+
+class File_details(models.Model):
+    file_id = models.AutoField(primary_key= True)
+    file_name = models.CharField(max_length= 50)
+    is_public = models.BooleanField(default= False)
+
 
 class File_Shared(models.Model):
     file_id = models.BigIntegerField(null = True)
     user_id = models.BigIntegerField(null= True)
-    public = models.BooleanField(default= False)
-    
+
 
 class Comments(models.Model):
     file_id = models.BigIntegerField(default= -1)
