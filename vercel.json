@@ -7,9 +7,6 @@
         "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
       }
     ],
-    "rewrites": [
-        { "source": "/(.*)", "destination": "src/app.js" }
-    ],
     "headers": [
         {
           "source": "/(.*)",
