@@ -18,15 +18,20 @@ def read_in_chunks(file_object, chunk_size=1024):
         yield data
 class PDFView(APIView):
     def get(self, request):
-        payload = verify_token(request.headers["Authorization"].split(" ")[1])
-        files = FileShared.objects.filter(user_id = payload["user_id"])
-        response_dict = list()
-        for file in files:
-            file_detail = FileDetails.objects.get(file_id = file.file_id)
-            response_dict.append(FileDetailsSerializer(file_detail).data)
-        response = JsonResponse({"result" : response_dict}, safe= False)
-        response.status_code = 200
-        return response
+        try: 
+            payload = verify_token(request.headers["Authorization"].split(" ")[1])
+            files = FileShared.objects.filter(user_id = payload["user_id"])
+            response_dict = list()
+            for file in files:
+                file_detail = FileDetails.objects.get(file_id = file.file_id)
+                response_dict.append(FileDetailsSerializer(file_detail).data)
+            response = JsonResponse({"result" : response_dict}, safe= False)
+            response.status_code = 200
+            return response
+        except Exception as e:
+            response = HttpResponse(str(e))
+            response.status_code = 400
+            return response
     
     def post(self, request):
         try:
@@ -104,4 +109,4 @@ class OpenPDFView(APIView):
             response.status_code = 500
             return response
         
-        
+

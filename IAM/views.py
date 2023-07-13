@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from IAM.utils.utils import verify_token
 from .models import User
 import jwt
-
+from IAM.serializers import UserSerializer
 class RegistrationView(APIView):
     def post(self, request):
         data = request.data
@@ -59,3 +59,20 @@ class Login(APIView):
         response = JsonResponse(response_body)
         response.status_code = 200
         return response
+
+
+class UserListView(APIView):
+    def get(self, request):
+        try:
+            payload = verify_token(request.headers["Authorization"].split(" ")[1])
+            users = User.objects.all()
+            user_list = list()
+            for user in users:
+                user_list.append(UserSerializer(user).data)
+            response = JsonResponse({"result" : user_list}, safe= False)
+            response.status_code = 200
+            return response
+        except Exception as e:
+            response = HttpResponse(str(e))
+            response.status_code = 400
+            return response
