@@ -164,3 +164,9 @@ class CommentsView(APIView):
             response.status_code = 500
             return response
 
+
+class PDFDetailView(APIView):
+    def get(self, request, file_id):
+        file = FileDetails.objects.get(file_id = file_id)
+        response = JsonResponse({"is_public" : file.is_public})
+        return response
