@@ -73,6 +73,9 @@ class PDFView(APIView):
                 file_shared.user_id = user[0].id
                 file_shared.file_id = data["file_id"]
                 file_shared.save()
+                response = HttpResponse(f"The file was shared successfully with {data['second_user']}")
+                response.status_code = 200
+                return response
             elif data["operation"] == "toggle":
                 file_detail = FileDetails.objects.get(file_id = data["file_id"])
                 file_detail.is_public = not file_detail.is_public
