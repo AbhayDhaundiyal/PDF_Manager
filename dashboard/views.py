@@ -120,7 +120,7 @@ class CommentsView(APIView):
             if comment_id:
                 get_object_or_404(Comments, id = comment_id)
             comment = Comments()
-            comment.user_id = payload["user_id"]
+            comment.author = payload["user_id"]
             comment.file_id = file_id
             comment.content = data["content"]
             if comment_id:
