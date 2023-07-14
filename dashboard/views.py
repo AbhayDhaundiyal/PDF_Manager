@@ -70,7 +70,7 @@ class PDFView(APIView):
                     response.status_code = 400
                     return response
                 file_shared = FileShared()
-                file_shared.user_id = data["second_user"]
+                file_shared.user_id = user.id
                 file_shared.file_id = data["file_id"]
                 file_shared.save()
             elif data["operation"] == "toggle":
