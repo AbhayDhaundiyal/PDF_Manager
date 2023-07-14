@@ -7,14 +7,6 @@ from dashboard.models import FileShared, File, FileDetails, Comments
 from IAM.utils.utils import verify_token
 from dashboard.serializers import FileDetailsSerializer, CommentsSerializer
 
-def read_in_chunks(file_object, chunk_size=1024):
-    """Lazy function (generator) to read a file piece by piece.
-    Default chunk size: 1k."""
-    while True:
-        data = file_object.read(chunk_size)
-        if not data:
-            break
-        yield data
 class PDFView(APIView):
     def get(self, request):
         try: 
@@ -69,9 +61,14 @@ class PDFView(APIView):
             if len(file_detail) == 0:
                 raise Exception("Permission Denied")
             if data["operation"] == "share":
-                user = User.objects.filter(id = data["second_user"])
+                user = User.objects.filter(email = data["second_user"])
                 if len(user) == 0:
                     raise Exception("No such user")
+                shared = FileShared.objects.filter(data["second_user"], file_id = data["file_id"])
+                if len(shared) > 0:
+                    response = HttpResponse(f"This File is already shared to {data['second_user']}")
+                    response.status_code = 400
+                    return response
                 file_shared = FileShared()
                 file_shared.user_id = data["second_user"]
                 file_shared.file_id = data["file_id"]
@@ -134,11 +131,11 @@ class CommentsView(APIView):
             return response
     def get(self, request, file_id, comment_id):
         try:
-            if comment_id == 0:
+            file_details = get_object_or_404(FileDetails, file_id = file_id)
+            if not file_details.is_public:
                 payload = verify_token(request.headers["Authorization"].split(" ")[1])
-                file_details = get_object_or_404(FileDetails, file_id = file_id)
-                if not file_details.is_public:
-                    get_object_or_404(FileShared, file_id = file_id, user_id = payload["user_id"])
+                get_object_or_404(FileShared, file_id = file_id, user_id = payload["user_id"])
+            if comment_id == 0:
                 comments = Comments.objects.filter(file_id = file_id, parent = None)
                 comment_list = list()
                 for comment in comments:
