@@ -146,6 +146,7 @@ class CommentsView(APIView):
                     dict = CommentsSerializer(comment).data
                     user = User.objects.get(id = comment.author)
                     dict["name"] = f"{user.first_name} {user.last_name}"
+                    dict["email"] = user.email
                     comment_list.append(dict)
                 response = JsonResponse(comment_list, safe=False)
                 response.status_code = 200
