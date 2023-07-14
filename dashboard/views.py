@@ -110,7 +110,7 @@ class OpenPDFView(APIView):
         
 
 class CommentsView(APIView):
-    def post(self, request, file_id, comment_id):
+    def post(self, request, file_id : int, comment_id : int):
         try:
             payload = verify_token(request.headers["Authorization"].split(" ")[1])
             data = request.data
@@ -133,7 +133,7 @@ class CommentsView(APIView):
             response = HttpResponse(str(e))
             response.status_code = 500
             return response
-    def get(self, request, file_id, comment_id):
+    def get(self, request, file_id : int, comment_id : int):
         try:
             file_details = get_object_or_404(FileDetails, file_id = file_id)
             if not file_details.is_public:
