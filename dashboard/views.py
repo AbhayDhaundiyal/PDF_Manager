@@ -140,7 +140,7 @@ class CommentsView(APIView):
                 payload = verify_token(request.headers["Authorization"].split(" ")[1])
                 get_object_or_404(FileShared, file_id = file_id, user_id = payload["user_id"])
             if comment_id == 0:
-                comments = Comments.objects.filter(file_id = file_id, parent = None)
+                comments = Comments.objects.filter(file_id = file_id, parent = None).order_by('-created_at')
                 comment_list = list()
                 for comment in comments:
                     dict = CommentsSerializer(comment).data
@@ -153,7 +153,7 @@ class CommentsView(APIView):
                 return response
             else:
                 get_object_or_404(Comments, id = comment_id)
-                replies = Comments.objects.filter(parent = comment_id)
+                replies = Comments.objects.filter(parent = comment_id).order_by('created_at')
                 reply_list = list()
                 for reply in replies:
                     reply_list.append(CommentsSerializer(reply).data)
