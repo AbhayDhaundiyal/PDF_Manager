@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from dashboard.models import FileShared, File, FileDetails
+from dashboard.models import FileShared, File, FileDetails, Comments
 
 
 class FileDetailsSerializer(serializers.ModelSerializer):
@@ -16,4 +16,11 @@ class FileSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = File
+        fields = "__all__"
+
+
+class CommentsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Comments
         fields = "__all__"

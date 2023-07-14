@@ -1,12 +1,11 @@
 import datetime
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404, render
-from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from IAM.models import User
-from dashboard.models import FileShared, File, FileDetails
+from dashboard.models import FileShared, File, FileDetails, Comments
 from IAM.utils.utils import verify_token
-from dashboard.serializers import FileDetailsSerializer
+from dashboard.serializers import FileDetailsSerializer, CommentsSerializer
 
 def read_in_chunks(file_object, chunk_size=1024):
     """Lazy function (generator) to read a file piece by piece.
@@ -109,4 +108,55 @@ class OpenPDFView(APIView):
             response.status_code = 500
             return response
         
+
+class CommentsView(APIView):
+    def post(self, request):
+        try:
+            payload = verify_token(request.headers["Authorization"].split(" ")[1])
+            data = request.data
+            file_details = get_object_or_404(FileDetails, file_id = data['file_id'])
+            if not file_details.is_public:
+                get_object_or_404(FileShared, file_id = data['file_id'], user_id = payload["user_id"])
+            if data.get("comment_id", None):
+                get_object_or_404(Comments, id = data["comment_id"])
+            comment = Comments()
+            comment.user_id = payload["user_id"]
+            comment.file_id = data["file_id"]
+            comment.content = data["content"]
+            comment.parent = data.get("comment_id", None)
+            comment.save()
+            response = HttpResponse("comment added")
+            response.status_code = 201
+            return response
+        except Exception as e:
+            response = HttpResponse(str(e))
+            response.status_code = 500
+            return response
+    def get(self, request, file_id, comment_id):
+        try:
+            if comment_id == 0:
+                payload = verify_token(request.headers["Authorization"].split(" ")[1])
+                file_details = get_object_or_404(FileDetails, file_id = file_id)
+                if not file_details.is_public:
+                    get_object_or_404(FileShared, file_id = file_id, user_id = payload["user_id"])
+                comments = Comments.objects.filter(file_id = file_id, parent = None)
+                comment_list = list()
+                for comment in comments:
+                    comment_list.append(CommentsSerializer(comment).data)
+                response = JsonResponse(comment_list, safe=False)
+                response.status_code = 200
+                return response
+            else:
+                get_object_or_404(Comments, id = comment_id)
+                replies = Comments.objects.filter(parent = comment_id)
+                reply_list = list()
+                for reply in replies:
+                    reply_list.append(CommentsSerializer(reply).data)
+                response = JsonResponse(reply_list, safe=False)
+                response.status_code = 200
+                return response
+        except Exception as e:
+            response = HttpResponse(str(e))
+            response.status_code = 500
+            return response
 
