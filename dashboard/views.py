@@ -114,14 +114,14 @@ class CommentsView(APIView):
         try:
             payload = verify_token(request.headers["Authorization"].split(" ")[1])
             data = request.data
-            file_details = get_object_or_404(FileDetails, file_id = data['file_id'])
+            file_details = get_object_or_404(FileDetails, file_id = file_id)
             if not file_details.is_public:
-                get_object_or_404(FileShared, file_id = data['file_id'], user_id = payload["user_id"])
+                get_object_or_404(FileShared, file_id = file_id, user_id = payload["user_id"])
             if comment_id:
-                get_object_or_404(Comments, id = data["comment_id"])
+                get_object_or_404(Comments, id = comment_id)
             comment = Comments()
             comment.user_id = payload["user_id"]
-            comment.file_id = data["file_id"]
+            comment.file_id = file_id
             comment.content = data["content"]
             if comment_id:
                 comment.parent = comment_id
