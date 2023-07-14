@@ -110,20 +110,21 @@ class OpenPDFView(APIView):
         
 
 class CommentsView(APIView):
-    def post(self, request):
+    def post(self, request, file_id, comment_id):
         try:
             payload = verify_token(request.headers["Authorization"].split(" ")[1])
             data = request.data
             file_details = get_object_or_404(FileDetails, file_id = data['file_id'])
             if not file_details.is_public:
                 get_object_or_404(FileShared, file_id = data['file_id'], user_id = payload["user_id"])
-            if data.get("comment_id", None):
+            if comment_id:
                 get_object_or_404(Comments, id = data["comment_id"])
             comment = Comments()
             comment.user_id = payload["user_id"]
             comment.file_id = data["file_id"]
             comment.content = data["content"]
-            comment.parent = data.get("comment_id", None)
+            if comment_id:
+                comment.parent = comment_id
             comment.save()
             response = HttpResponse("comment added")
             response.status_code = 201
