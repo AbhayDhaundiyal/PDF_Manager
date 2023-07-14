@@ -64,13 +64,13 @@ class PDFView(APIView):
                 user = User.objects.filter(email = data["second_user"])
                 if len(user) == 0:
                     raise Exception("No such user")
-                shared = FileShared.objects.filter(data["second_user"], file_id = data["file_id"])
+                shared = FileShared.objects.filter(user_id = user[0].id, file_id = data["file_id"])
                 if len(shared) > 0:
                     response = HttpResponse(f"This File is already shared to {data['second_user']}")
                     response.status_code = 400
                     return response
                 file_shared = FileShared()
-                file_shared.user_id = user.id
+                file_shared.user_id = user[0].id
                 file_shared.file_id = data["file_id"]
                 file_shared.save()
             elif data["operation"] == "toggle":
