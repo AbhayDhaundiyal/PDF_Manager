@@ -24,3 +24,4 @@ class Comments(models.Model):
     author = models.IntegerField(default= -1)
     content = models.CharField(max_length= 300)
     parent = models.BigIntegerField(default= None, null= True)
+    created_at = models.DateTimeField(default = datetime.now())

@@ -143,7 +143,10 @@ class CommentsView(APIView):
                 comments = Comments.objects.filter(file_id = file_id, parent = None)
                 comment_list = list()
                 for comment in comments:
-                    comment_list.append(CommentsSerializer(comment).data)
+                    dict = CommentsSerializer(comment).data
+                    user = User.objects.get(id = comment.author)
+                    dict["name"] = f"{user.first_name} {user.last_name}"
+                    comment_list.append(dict)
                 response = JsonResponse(comment_list, safe=False)
                 response.status_code = 200
                 return response
