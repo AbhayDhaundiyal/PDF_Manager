@@ -123,6 +123,7 @@ class CommentsView(APIView):
             comment.author = payload["user_id"]
             comment.file_id = file_id
             comment.content = data["content"]
+            comment.created_at = datetime.datetime.now()
             if comment_id:
                 comment.parent = comment_id
             comment.save()

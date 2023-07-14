@@ -22,6 +22,6 @@ class FileShared(models.Model):
 class Comments(models.Model):
     file_id = models.BigIntegerField(default= -1)
     author = models.IntegerField(default= -1)
-    content = models.CharField(max_length= 300)
+    content = models.TextField()
     parent = models.BigIntegerField(default= None, null= True)
     created_at = models.DateTimeField(default = datetime.now())
