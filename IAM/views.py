@@ -6,6 +6,7 @@ from IAM.utils.utils import verify_token
 from .models import User
 import jwt
 from IAM.serializers import UserSerializer
+from django.contrib.auth.hashers import make_password, check_password
 class RegistrationView(APIView):
     def post(self, request):
         data = request.data
@@ -14,7 +15,7 @@ class RegistrationView(APIView):
                 response = HttpResponse("Empty Fields Not Accepted")
                 response.status_code = 400 
                 return response
-            user = User(first_name = data["first_name"], last_name = data["last_name"], email = data["email"], password = data["password"])
+            user = User(first_name = data["first_name"], last_name = data["last_name"], email = data["email"], password = make_password(data["password"]))
             user.save()
         except IntegrityError as e:
             response = HttpResponse("Account with the same email already exists")
@@ -38,7 +39,7 @@ class Login(APIView):
             response.status_code = 400 
             return response
         
-        if user.password != data["password"]:
+        if not check_password(data["password"], user.password):
             response = HttpResponse("Incorrect Password")
             response.status_code = 400 
             return response
